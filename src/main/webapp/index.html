@@ -21,19 +21,20 @@
 
 <body>
   <script id="image-results" type="text/x-handlebars-template">
-    <div id="{{id}}" class="panel panel-default entry-box {{#if pending}}entry-pending{{/if}}">
+    <div id="{{id}}" class="panel panel-default entry-box">
 
       <div class="panel-heading">
+        {{#if pending}}<span class="fa fa-spinner fa-spin"></span>{{/if}}
         {{title}}
       </div>
 
-      <div class="panel-body">
+      <div class="panel-body {{#if pending}}entry-pending{{/if}}">
         <div class="row">
           <div class="col-md-4">
             <img class="img-responsive entry-thumbnail" src="{{imageUrl}}" />
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div>
               <h5>Alchemy Image Keywords</h5>
               <ul class="entry-taglist">
@@ -46,7 +47,7 @@
             </div>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-5">
             <div class="entry-faces">
               <h5>Alchemy Face Detection</h5> {{#if faces}}
               <ul class="entry-taglist">

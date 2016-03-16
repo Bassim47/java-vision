@@ -2,13 +2,14 @@
 
 [![Deploy to Bluemix](http://bluemix.net/deploy/button.png)](https://bluemix.net/deploy)
 
-  <img src="screenshot.png" width="200"/>
+  <img src="screenshot.png" width="600"/>
 
 ## Overview
 
  Built using IBM Bluemix, the application uses:
   * [Liberty for Java™](https://www.ng.bluemix.net/docs/starters/liberty/index.html)
-  * [Alchemy Vision](https://console.ng.bluemix.net/catalog/services/alchemy_api)
+  * [Alchemy Vision](https://console.ng.bluemix.net/catalog/services/alchemy_api) through the
+  [Watson Developer Cloud Java SDK](http://watson-developer-cloud.github.io/java-sdk/)
 
 ## Running the app on Bluemix
 
