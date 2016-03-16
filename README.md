@@ -1,5 +1,7 @@
 # Java™ Vision - sample Java web application using the Alchemy Vision API for image tagging and face detection
 
+This projects shows how to use the Alchemy Vision API in a Java application.
+
 [![Deploy to Bluemix](http://bluemix.net/deploy/button.png)](https://bluemix.net/deploy)
 
   <img src="screenshot.png" width="600"/>
@@ -10,7 +12,7 @@
   * [Liberty for Java™](https://www.ng.bluemix.net/docs/starters/liberty/index.html)
   * [Alchemy Vision](https://console.ng.bluemix.net/catalog/services/alchemy_api) through the
   [Watson Developer Cloud Java SDK](http://watson-developer-cloud.github.io/java-sdk/)
-
+  
 ## Running the app on Bluemix
 
 1. [Sign up for Bluemix][bluemix_signup_url] or use your existing account.
@@ -57,13 +59,34 @@ And voila! You now have your very own instance of the application running on Blu
 
 ## Running the app locally
 
-TODO
+The following instructions assume you are using [Eclipse IDE for Java EE developers](http://www.eclipse.org/downloads/)
+and Websphere Application Server Liberty Profile Developer Tools for Mars.
+
+1. To run the application locally, follow [Step 1](https://github.com/IBM-Bluemix/local-liberty-tutorial/blob/master/docs/001-IMPORT-SOURCE.md)
+and [Step 2](https://github.com/IBM-Bluemix/local-liberty-tutorial/blob/master/docs/002-LIBERTY.md)
+from this [other tutorial](https://github.com/IBM-Bluemix/local-liberty-tutorial) to get the code into your Eclipse environment.
+
+1. Add an environment variable named **ALCHEMY_API_KEY** with your Alchemy API key in the server environment (server.env in Liberty).
+You can retrieve the Alchemy API key from the Bluemix console.
+
+1. Add the **java-vision** projet to Liberty profile.
+
+1. Start the Liberty server.
 
 ## Code Structure
 
+### Back-end
+
 | File | Description |
 | ---- | ----------- |
-|[**TODO**](TODO)|TODO|
+|[**Analysis.java**](src/main/java/net/bluemix/tutorial/vision/Analysis.java)|Implements /api/analysis/image and /api/analysis/url endpoints by calling the Alchemy Vision API|
+
+### Front-end
+
+| File | Description |
+| ---- | ----------- |
+|[**index.html**](src/main/webapp/index.html)|User interface to drop images or specify URLs|
+|[**vision.js**](src/main/webapp/js/vision.js)|Captures the drag and drop or URL specification and calls the server API|
 
 ## Troubleshooting
 
