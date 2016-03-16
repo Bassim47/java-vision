@@ -49,6 +49,13 @@ public class Analysis {
     // Alchemy API key is automatically retrieved from VCAP_SERVICES by the
     // Watson SDK
     vision = new AlchemyVision();
+    
+    // Allow a developer running locally to override the Alchemy API key with an environment variable.
+    // When working with Liberty, it can be defined in server.env.
+    String apiKey = System.getenv("ALCHEMY_API_KEY");
+    if (apiKey != null) {
+      vision.setApiKey(apiKey);
+    }
   }
 
   @POST
