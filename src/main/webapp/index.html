@@ -21,50 +21,51 @@
 
 <body>
   <script id="image-results" type="text/x-handlebars-template">
-    <div id="{{file.imageId}}" class="panel panel-default entry-box">
+    <div id="{{id}}" class="panel panel-default entry-box {{#if pending}}entry-pending{{/if}}">
+
       <div class="panel-heading">
-        {{file.name}}
+        {{title}}
       </div>
 
       <div class="panel-body">
-        <div class="col-md-4">
-          <img src="{{file.dataUrl}}" />
-        </div>
-
-        <div class="col-md-4">
-          <div>
-            <h4>Alchemy Image Keywords</h4>
-            <ul class="entry-taglist">
-              {{#each keywords}}
-              <li class="entry-tag">
-                <span class="label label-info">{{text}} {{formatPercent score}}%</span>
-              </li>
-              {{/each}}
-            </ul>
+        <div class="row">
+          <div class="col-md-4">
+            <img class="img-responsive entry-thumbnail" src="{{imageUrl}}" />
           </div>
-        </div>
 
-        <div class="col-md-4">
-          <div class="entry-faces">
-            <h4>Alchemy Face Detection</h4>
-            {{#if faces}}
-            <ul class="entry-taglist">
-              {{#each faces}}
-              <li class="entry-tag">
-                {{#if identity}}
-                <span class="label label-info">{{identity.name}} {{formatPercent identity.score}}%</span>
-                <span>&nbsp;</span>
-                {{/if}}
-                <span class="label label-info">{{gender.gender}} {{age.ageRange}} {{formatPercent age.score}}%</span>
-              </li>
-              {{/each}}
-            </ul>
-            {{else}}
-            <span>No face detected</span>
-            {{/if}}
+          <div class="col-md-4">
+            <div>
+              <h5>Alchemy Image Keywords</h5>
+              <ul class="entry-taglist">
+                {{#each keywords}}
+                <li class="entry-tag">
+                  <span class="label label-info">{{text}} {{formatPercent score}}%</span>
+                </li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="entry-faces">
+              <h5>Alchemy Face Detection</h5> {{#if faces}}
+              <ul class="entry-taglist">
+                {{#each faces}}
+                <li class="entry-tag">
+                  {{#if identity}}
+                  <span class="label label-info">{{identity.name}} {{formatPercent identity.score}}%</span>
+                  <span>&nbsp;</span> {{/if}}
+                  <span class="label label-info">{{gender.gender}} {{age.ageRange}} {{formatPercent age.score}}%</span>
+                </li>
+                {{/each}}
+              </ul>
+              {{else}}
+              <span>No face detected</span> {{/if}}
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   </script>
 
@@ -91,13 +92,36 @@
     </div>
   </nav>
 
-  <div class="container">
+  <div id="analysis-input">
+    <p>
+      <a href="http://vision.alchemy.ai/">AlchemyVision</a> enables Developers to detect the face position, age range, gender, celebrities, objects, words and similar images found in large volumes of images.
+    </p>
+
+    <div class="section-title">Try it!</div>
 
     <form action="api/analysis/image" class="dropzone" id="uploadZone" enctype="multipart/form-data">
     </form>
 
-    <div id="results">
+    <div class="section-title">or Specify a public image URL</div>
+    <div>
+      <form data-toggle="validator" class="for" id="analyze-url-form">
+        <div class="form-group">
+          <input type="text" name="url" class="form-control" id="image-url" placeholder="Paste a url here">
+        </div>
+        <button type="submit" class="btn btn-default btn-success">Analyze it!</button>
+      </form>
     </div>
+
+    <div class="section-title">or Select an image from this selection</div>
+    <div>
+      <img class="sample-image" src="http://vision.alchemy.ai/img/demo/4109283.jpg" />
+      <img class="sample-image" src="http://vision.alchemy.ai/img/demo/9817239.jpg" />
+      <img class="sample-image" src="http://vision.alchemy.ai/img/demo/5682349.jpg" />
+      <img class="sample-image" src="http://vision.alchemy.ai/img/demo/1754836.jpg" />
+    </div>
+  </div>
+
+  <div id="results">
   </div>
 
   <footer>

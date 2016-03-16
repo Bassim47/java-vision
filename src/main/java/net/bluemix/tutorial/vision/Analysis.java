@@ -15,12 +15,14 @@ package net.bluemix.tutorial.vision;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +43,14 @@ public class Analysis {
   private static Logger LOGGER = Logger.getLogger(Analysis.class.getName());
   private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+  private AlchemyVision vision;
+
+  public Analysis() {
+    // Alchemy API key is automatically retrieved from VCAP_SERVICES by the
+    // Watson SDK
+    vision = new AlchemyVision();
+  }
+
   @POST
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @Path("image")
@@ -55,10 +65,7 @@ public class Analysis {
     LOGGER.info("Analyzing a binary file " + tmpFile);
     Files.copy(fileInput, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-    // Alchemy API key is automatically retrieved from VCAP_SERVICES by the Watson SDK
-    AlchemyVision vision = new AlchemyVision();
     Result result = new Result();
-
     LOGGER.info("Calling Face Detection...");
     result.faces = vision.recognizeFaces(tmpFile, true).getImageFaces();
 
@@ -68,8 +75,26 @@ public class Analysis {
     return Response.ok(gson.toJson(result), MediaType.APPLICATION_JSON_TYPE).build();
   }
 
+  @POST
+  @Path("url")
+  public Response url(@FormParam("url") String urlText) throws Exception {
+    URL url = new URL(urlText);
+
+    Result result = new Result();
+    result.url = urlText;
+    
+    LOGGER.info("Calling Face Detection...");
+    result.faces = vision.recognizeFaces(url, true).getImageFaces();
+
+    LOGGER.info("Calling Image Keyword...");
+    result.keywords = vision.getImageKeywords(url, true, true).getImageKeywords();
+
+    return Response.ok(gson.toJson(result), MediaType.APPLICATION_JSON_TYPE).build();
+  }
+
   @SuppressWarnings("unused")
   private static class Result {
+    String url;
     List<ImageFace> faces;
     List<ImageKeyword> keywords;
   }

@@ -23,9 +23,27 @@ Dropzone.autoDiscover = false;
       return Math.round(float * 100);
     });
 
+    // create a placeholder for the result
+    function addResultPending(imageId, imageTitle, imageUrl) {
+      var context = {
+        id: imageId,
+        title: imageTitle,
+        imageUrl: imageUrl,
+        faces: [],
+        keywords: [],
+        pending: true
+      };
+      $("#results").prepend(thumbnailTemplate(context));
+    }
+
+    // when results are received
+    function onResultReceived(imageId, context, response) {
+      $("#" + imageId).replaceWith(thumbnailTemplate(context));
+    }
+
     $("#uploadZone").dropzone({
       parallelUploads: 1,
-      maxFiles: 5,
+      maxFiles: 1,
       maxFilesize: 1, //MB
       uploadMultiple: false,
       acceptedFiles: "image/*",
@@ -39,6 +57,8 @@ Dropzone.autoDiscover = false;
         this.on("thumbnail", function (file, dataUrl) {
           file.imageId = "image-" + (imageCount++);
           file.dataUrl = dataUrl;
+
+          addResultPending(file.imageId, "...", file.dataUrl);
         });
 
         this.on("error", function (file, errorMessage) {
@@ -47,17 +67,52 @@ Dropzone.autoDiscover = false;
 
         this.on("success", function (file, response) {
           var context = {
-            file: file,
+            id: file.imageId,
+            title: file.name,
+            imageUrl: file.dataUrl,
             faces: response.faces,
             keywords: response.keywords
           }
-          $("#results").prepend(thumbnailTemplate(context));
+          onResultReceived(file.imageId, context, response);
         });
 
         this.on("complete", function (file) {
           this.removeFile(file);
         });
       }
+    });
+
+
+    function processUrl(imageUrl) {
+      var imageId = "image-" + (imageCount++);
+      addResultPending(imageId, imageUrl, imageUrl);
+
+      $.ajax({
+        url: "api/analysis/url",
+        type: "POST",
+        data: {
+          url: imageUrl
+        },
+        success: function (response) {
+          var context = {
+            id: imageId,
+            title: response.url,
+            imageUrl: response.url,
+            faces: response.faces,
+            keywords: response.keywords
+          };
+          onResultReceived(imageId, context, response);
+        }
+      });
+    }
+
+    $(".sample-image").on("click", function (e) {
+      processUrl($(this).attr("src"));
+    });
+
+    $("#analyze-url-form").submit(function (e) {
+      e.preventDefault();
+      processUrl($("#image-url").val());
     });
   });
 })();
