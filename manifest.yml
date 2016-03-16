@@ -1,0 +1,10 @@
+declared-services:
+  vision-alchemy:
+    label: alchemy_api
+    plan: Shared
+applications:
+- services:
+  - vision-alchemy
+  name: java-vision
+  path: target/java-vision.war
+  random-route: true

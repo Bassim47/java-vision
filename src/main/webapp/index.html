@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+// Licensed under the Apache License. See footer for details.
+-->
+<html ng-app="app" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vision</title>
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link href="css/dropzone.css" rel="stylesheet">
+  <link href="css/vision.css" rel="stylesheet">
+</head>
+
+<body>
+  <script id="image-results" type="text/x-handlebars-template">
+    <div id="{{file.imageId}}" class="panel panel-default entry-box">
+      <div class="panel-heading">
+        {{file.name}}
+      </div>
+
+      <div class="panel-body">
+        <div class="col-md-4">
+          <img src="{{file.dataUrl}}" />
+        </div>
+
+        <div class="col-md-4">
+          <div>
+            <h4>Alchemy Image Keywords</h4>
+            <ul class="entry-taglist">
+              {{#each keywords}}
+              <li class="entry-tag">
+                <span class="label label-info">{{text}} {{formatPercent score}}%</span>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="entry-faces">
+            <h4>Alchemy Face Detection</h4>
+            {{#if faces}}
+            <ul class="entry-taglist">
+              {{#each faces}}
+              <li class="entry-tag">
+                {{#if identity}}
+                <span class="label label-info">{{identity.name}} {{formatPercent identity.score}}%</span>
+                <span>&nbsp;</span>
+                {{/if}}
+                <span class="label label-info">{{gender.gender}} {{age.ageRange}} {{formatPercent age.score}}%</span>
+              </li>
+              {{/each}}
+            </ul>
+            {{else}}
+            <span>No face detected</span>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <div class="spinner">
+    <div class="double-bounce1"></div>
+    <div class="double-bounce2"></div>
+  </div>
+
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" ui-sref="videos()">Vision</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <form action="api/analysis/image" class="dropzone" id="uploadZone" enctype="multipart/form-data">
+    </form>
+
+    <div id="results">
+    </div>
+  </div>
+
+  <footer>
+    <p class="text-center">made by <a href="https://twitter.com/l2fprod">fred</a> with <a href="http://bluemix.net">IBM Bluemix</a></p>
+  </footer>
+
+  <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+
+  <script src="js/dropzone.js"></script>
+  <script src="js/vision.js"></script>
+</body>
+
+</html>
+<!--
+//------------------------------------------------------------------------------
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//------------------------------------------------------------------------------
+-->
