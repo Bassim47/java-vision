@@ -1,7 +1,7 @@
 declared-services:
   vision-alchemy:
     label: alchemy_api
-    plan: Shared
+    plan: free
 applications:
 - services:
   - vision-alchemy
