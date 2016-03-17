@@ -88,6 +88,15 @@ You can retrieve the Alchemy API key from the Bluemix console.
 |[**index.html**](src/main/webapp/index.html)|User interface to drop images or specify URLs|
 |[**vision.js**](src/main/webapp/js/vision.js)|Captures the drag and drop or URL specification and calls the server API|
 
+## Going further
+
+Why stop there? Here are some suggestions you can try to extend the application:
+* Alchemy Vision has another API that we don't use in the app, the Scene Text to identify text in an image.
+This would make a good addition to the image tagging and face detection.
+* The [Watson Visual Recognition](https://console.ng.bluemix.net/catalog/services/visual_recognition) service in Bluemix brings
+its own set of tags but more importantly it can be trained with your own classifiers.
+[This demo](https://github.com/watson-developer-cloud/visual-recognition-nodejs) is a good starting point.
+
 ## Troubleshooting
 
 The primary source of debugging information for your Bluemix app is the logs.

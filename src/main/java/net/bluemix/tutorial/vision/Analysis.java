@@ -41,9 +41,9 @@ import com.ibm.watson.developer_cloud.alchemy.v1.model.ImageKeyword;
 public class Analysis {
 
   private static Logger LOGGER = Logger.getLogger(Analysis.class.getName());
+  
   private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-  private AlchemyVision vision;
+  private final AlchemyVision vision;
 
   public Analysis() {
     // Alchemy API key is automatically retrieved from VCAP_SERVICES by the
