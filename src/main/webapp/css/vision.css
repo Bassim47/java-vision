@@ -29,10 +29,29 @@ body {
     overflow: auto;
   }
 
-  #results {
+  #results, #no-result-yet {
     margin-left: 320px;
     margin-right: 20px;
   }
+  
+  #no-result-yet {
+    margin-top: 100px;
+  }
+  
+}
+
+#no-result-yet {
+  text-align: center;
+  font-size: 30px;
+  color: #dfdfdf;
+}
+
+#results:empty + #no-result-yet {
+  display: block;
+}
+
+#results + #no-result-yet {
+  display: none;
 }
 
 .section-title {

@@ -20,7 +20,7 @@ Dropzone.autoDiscover = false;
     var imageCount = 0;
     
     // the template to render an image and its analysis
-    var thumbnailTemplate = Handlebars.compile($("#image-results").html());
+    var thumbnailTemplate = Handlebars.compile($("#image-results").html().trim());
 
     // helper to turn 0..1 floats into percentages
     Handlebars.registerHelper('formatPercent', function (float) {
