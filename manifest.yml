@@ -1,10 +1,10 @@
 declared-services:
-  vision-alchemy:
-    label: alchemy_api
+  watson-vision:
+    label: watson_vision_combined
     plan: free
 applications:
 - services:
-  - vision-alchemy
+  - watson-vision
   name: java-vision
   path: target/java-vision.war
   random-route: true

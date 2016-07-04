@@ -1,6 +1,6 @@
-# Java™ Vision - sample Java web application using the Alchemy Vision API for image tagging and face detection
+# Java™ Vision - sample Java web application using the Watson Visual Recognition API for image tagging and face detection
 
-This projects shows how to use the Alchemy Vision API in a Java application.
+This projects shows how to use the Watson Visual Recognition API in a Java application.
 
 [![Deploy to Bluemix](http://bluemix.net/deploy/button.png)](https://bluemix.net/deploy)
 
@@ -10,7 +10,7 @@ This projects shows how to use the Alchemy Vision API in a Java application.
 
  Built using IBM Bluemix, the application uses:
   * [Liberty for Java™](https://www.ng.bluemix.net/docs/starters/liberty/index.html)
-  * [Alchemy Vision](https://console.ng.bluemix.net/catalog/services/alchemy_api) through the
+  * [Visual Recognition](https://console.ng.bluemix.net/catalog/services/watson_vision_combined) through the
   [Watson Developer Cloud Java SDK](http://watson-developer-cloud.github.io/java-sdk/)
   
 ## Running the app on Bluemix
@@ -43,10 +43,10 @@ This projects shows how to use the Alchemy Vision API in a Java application.
   **Note**: The services in the following steps may produce warnings when you create them, alerting you that they are not entirely free.
   Creating and trying this app leaves you well within the limits of your free quota, however, always remain cognizant of your monthly service usage.
 
-1. Create the Cloudant service in Bluemix.
+1. Create the Watson service in Bluemix.
 
   ```
-  $ cf create-service alchemy_api free vision-alchemy
+  $ cf create-service watson_vision_combined free watson-vision
   ```
 
 1. Push your app to Bluemix
@@ -66,8 +66,8 @@ and Websphere Application Server Liberty Profile Developer Tools for Mars.
 and [Step 2](https://github.com/IBM-Bluemix/local-liberty-tutorial/blob/master/docs/002-LIBERTY.md)
 from this [other tutorial](https://github.com/IBM-Bluemix/local-liberty-tutorial) to get the code into your Eclipse environment.
 
-1. Add an environment variable named **ALCHEMY_API_KEY** with your Alchemy API key in the server environment (server.env in Liberty).
-You can retrieve the Alchemy API key from the Bluemix console.
+1. Add an environment variable named **VISION_API_KEY** with your Watson Visual Recognition API key in the server environment (server.env in Liberty).
+You can retrieve the Watson Visual Recognition API key from the Bluemix console.
 
 1. Add the **java-vision** projet to Liberty profile.
 
@@ -79,7 +79,7 @@ You can retrieve the Alchemy API key from the Bluemix console.
 
 | File | Description |
 | ---- | ----------- |
-|[**Analysis.java**](src/main/java/net/bluemix/tutorial/vision/Analysis.java)|Implements /api/analysis/image and /api/analysis/url endpoints by calling the Alchemy Vision API|
+|[**Analysis.java**](src/main/java/net/bluemix/tutorial/vision/Analysis.java)|Implements /api/analysis/image and /api/analysis/url endpoints by calling the Watson Visual Recognition API|
 
 ### Front-end
 
@@ -87,15 +87,6 @@ You can retrieve the Alchemy API key from the Bluemix console.
 | ---- | ----------- |
 |[**index.html**](src/main/webapp/index.html)|User interface to drop images or specify URLs|
 |[**vision.js**](src/main/webapp/js/vision.js)|Captures the drag and drop or URL specification and calls the server API|
-
-## Going further
-
-Why stop there? Here are some suggestions you can try to extend the application:
-* Alchemy Vision has another API that we don't use in the app, the Scene Text to identify text in an image.
-This would make a good addition to the image tagging and face detection.
-* The [Watson Visual Recognition](https://console.ng.bluemix.net/catalog/services/visual_recognition) service in Bluemix brings
-its own set of tags but more importantly it can be trained with your own classifiers.
-[This demo](https://github.com/watson-developer-cloud/visual-recognition-nodejs) is a good starting point.
 
 ## Troubleshooting
 

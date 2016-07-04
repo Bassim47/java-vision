@@ -15,7 +15,6 @@ package net.bluemix.tutorial.vision;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -33,26 +32,38 @@ import org.apache.wink.common.model.multipart.InPart;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ibm.watson.developer_cloud.alchemy.v1.AlchemyVision;
-import com.ibm.watson.developer_cloud.alchemy.v1.model.ImageFace;
-import com.ibm.watson.developer_cloud.alchemy.v1.model.ImageKeyword;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyImagesOptions;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.DetectedFaces;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.Face;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ImageClassification;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ImageFace;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ImageText;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.RecognizedText;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassification;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassifier;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualRecognitionOptions;
 
 @Path("analysis")
 public class Analysis {
 
   private static Logger LOGGER = Logger.getLogger(Analysis.class.getName());
-  
+
   private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-  private final AlchemyVision vision;
+  private final VisualRecognition vision;
 
   public Analysis() {
-    // Alchemy API key is automatically retrieved from VCAP_SERVICES by the
-    // Watson SDK
-    vision = new AlchemyVision();
-    
-    // Allow a developer running locally to override the Alchemy API key with an environment variable.
-    // When working with Liberty, it can be defined in server.env.
-    String apiKey = System.getenv("ALCHEMY_API_KEY");
+    // API key is automatically retrieved from VCAP_SERVICES by the Watson SDK
+    vision = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_19);
+
+    // get the key from the VCAP_SERVICES as workaround for
+    // https://github.com/watson-developer-cloud/java-sdk/issues/371
+    vision.setApiKey(PatchedCredentialUtils.getAPIKey("watson_vision_combined"));
+
+    // Allow a developer running locally to override the API key with
+    // an environment variable. When working with Liberty, it can be defined
+    // in server.env.
+    String apiKey = System.getenv("VISION_API_KEY");
     if (apiKey != null) {
       vision.setApiKey(apiKey);
     }
@@ -62,48 +73,89 @@ public class Analysis {
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @Path("image")
   public Response image(BufferedInMultiPart file) throws Exception {
-    InPart filePart = file.getParts().get(0);
+    try {
+      InPart filePart = file.getParts().get(0);
 
-    // write it to disk
-    InputStream fileInput = filePart.getInputStream();
-    File tmpFile = File.createTempFile("vision-", ".jpg");
-    tmpFile.deleteOnExit();
+      // write it to disk
+      InputStream fileInput = filePart.getInputStream();
+      File tmpFile = File.createTempFile("vision-", ".jpg");
+      tmpFile.deleteOnExit();
 
-    LOGGER.info("Analyzing a binary file " + tmpFile);
-    Files.copy(fileInput, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      LOGGER.severe("Analyzing a binary file " + tmpFile);
+      Files.copy(fileInput, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-    Result result = new Result();
-    LOGGER.info("Calling Face Detection...");
-    result.faces = vision.recognizeFaces(tmpFile, true).getImageFaces();
+      VisualRecognitionOptions options = new VisualRecognitionOptions.Builder().images(tmpFile).build();
+      ClassifyImagesOptions classifyOptions = new ClassifyImagesOptions.Builder().images(tmpFile).build();
 
-    LOGGER.info("Calling Image Keyword...");
-    result.keywords = vision.getImageKeywords(tmpFile, true, true).getImageKeywords();
-
-    return Response.ok(gson.toJson(result), MediaType.APPLICATION_JSON_TYPE).build();
+      Result result = analyze(options, classifyOptions);
+      return Response.ok(gson.toJson(result), MediaType.APPLICATION_JSON_TYPE).build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return Response.serverError().build();
+    }
   }
 
   @POST
   @Path("url")
   public Response url(@FormParam("url") String urlText) throws Exception {
-    URL url = new URL(urlText);
+    try {
+      LOGGER.severe("Analyzing a link " + urlText);
+      VisualRecognitionOptions options = new VisualRecognitionOptions.Builder().url(urlText).build();
+      ClassifyImagesOptions classifyOptions = new ClassifyImagesOptions.Builder().url(urlText).build();
 
+      Result result = analyze(options, classifyOptions);
+      return Response.ok(gson.toJson(result), MediaType.APPLICATION_JSON_TYPE).build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return Response.serverError().build();
+    }
+  }
+
+  private Result analyze(VisualRecognitionOptions options, ClassifyImagesOptions classifyOptions) {
     Result result = new Result();
-    result.url = urlText;
-    
+
     LOGGER.info("Calling Face Detection...");
-    result.faces = vision.recognizeFaces(url, true).getImageFaces();
+    try {
+      DetectedFaces execute = vision.detectFaces(options).execute();
+      List<ImageFace> imageFaces = execute.getImages();
+      if (!imageFaces.isEmpty()) {
+        result.faces = imageFaces.get(0).getFaces();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     LOGGER.info("Calling Image Keyword...");
-    result.keywords = vision.getImageKeywords(url, true, true).getImageKeywords();
+    try {
+      VisualClassification execute = vision.classify(classifyOptions).execute();
+      List<ImageClassification> imageClassifiers = execute.getImages();
+      if (!imageClassifiers.isEmpty()) {
+        result.keywords = imageClassifiers.get(0).getClassifiers();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
-    return Response.ok(gson.toJson(result), MediaType.APPLICATION_JSON_TYPE).build();
+    LOGGER.info("Calling Scene Text...");
+    try {
+      RecognizedText execute = vision.recognizeText(options).execute();
+      List<ImageText> imageTexts = execute.getImages();
+      if (!imageTexts.isEmpty()) {
+        result.sceneText = imageTexts.get(0);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return result;
   }
 
   @SuppressWarnings("unused")
   private static class Result {
     String url;
-    List<ImageFace> faces;
-    List<ImageKeyword> keywords;
+    List<Face> faces;
+    List<VisualClassifier> keywords;
+    ImageText sceneText;
   }
 
 }
